@@ -1,3 +1,109 @@
+From e873c9d2e9b7fa0df89f2771bd082ce3ab369910 Mon Sep 17 00:00:00 2001
+From: "yonghyeon.kim" <yonghyeon.kim@lge.com>
+Date: Mon, 28 Apr 2025 18:22:12 +0900
+Subject: [PATCH] add file for yocto
+
+---
+ containers/agent-00-default.conf             | 42 ++++++++++++++++++++
+ containers/controller-00-default.conf        | 29 ++++++++++++++
+ containers/piccolo-pull.service              | 12 ++++++
+ containers/piccolo.sh                        |  8 ++++
+ containers/piccolo.yaml                      |  6 +--
+ examples/helloworld/packages/make_tar.sh     |  6 ---
+ examples/helloworld/script/input_package.sh  | 10 -----
+ examples/helloworld/script/input_scenario.sh | 16 --------
+ 8 files changed, 94 insertions(+), 35 deletions(-)
+ create mode 100644 containers/agent-00-default.conf
+ create mode 100644 containers/controller-00-default.conf
+ create mode 100644 containers/piccolo-pull.service
+ create mode 100644 containers/piccolo.sh
+ delete mode 100755 examples/helloworld/packages/make_tar.sh
+ delete mode 100755 examples/helloworld/script/input_package.sh
+ delete mode 100755 examples/helloworld/script/input_scenario.sh
+
+diff --git a/containers/agent-00-default.conf b/containers/agent-00-default.conf
+new file mode 100644
+index 0000000..7aba0bb
+--- /dev/null
++++ b/containers/agent-00-default.conf
+@@ -0,0 +1,42 @@
++# This is the configuration file for bluechi-agent.
++#
++# All available options are described in bluechi-agent.conf man page or in
++# agent.conf file provided by bluechi-agent package.
++#
++
++[bluechi-agent]
++#
++# The unique name of this agent.
++# NodeName defaults the system's hostname.
++NodeName=fvp-rd-kronos
++
++#
++# The IP address that bluechi-agent can use to connect to bluechi manager. It must be a valid IPv4 or IPv6 address.
++# One of the ManagerHost or ManagerAddress options must be set for each bluechi-agent.
++#ManagerHost=
++
++#
++# The port the manager listens on to establish connections with the bluechi agents.
++#ManagerPort=842
++
++#
++# SD Bus address used by bluechi-agent to connect to bluechi. See `man sd_bus_set_address` for its format.
++# The ManagerAddress overrides any setting of ManagerHost or ManagerPort defined in the configuration file as well as
++# the respective CLI options.
++#ManagerAddress=
++
++#
++# Defines the interval between two heartbeat signals sent to bluechi in milliseconds.
++#HeartbeatInterval=2000
++
++#
++# The level used for logging. Supported values are: DEBUG, INFO, WARN and ERROR.
++#LogLevel=INFO
++
++#
++# The target where logs are written to. Supported values are: journald and stderr.
++#LogTarget=journald
++
++#
++# If this flag is set to true, no logs are written by bluechi.
++#LogIsQuiet=false
+diff --git a/containers/controller-00-default.conf b/containers/controller-00-default.conf
+new file mode 100644
+index 0000000..10f317a
+--- /dev/null
++++ b/containers/controller-00-default.conf
+@@ -0,0 +1,29 @@
++# This is the configuration file for bluechi manager.
++#
++# All available options are described in bluechi.conf man page file provided by bluechi package.
++#
++
++[bluechi-controller]
++
++#
++# A comma separated list of unique bluechi-agent names. Only nodes with names mentioned in the list can connect to bluechi
++# manager. These names are defined in the agent's configuration file under the `NodeName` option.
++# (see `bluechi-agent.conf(5)`).
++# Note: The maximum line length is 500 characters. If the list exceeds this, use multiple, indented lines.
++AllowedNodeNames=fvp-rd-kronos
++
++#
++# The port the manager listens on to establish connections with the bluechi agents.
++ManagerPort=842
++
++#
++# The level used for logging. Supported values are: DEBUG, INFO, WARN and ERROR.
++LogLevel=INFO
++
++#
++# The target where logs are written to. Supported values are: journald and stderr.
++LogTarget=journald
++
++#
++# If this flag is set to true, no logs are written by bluechi.
++LogIsQuiet=false
 diff --git a/containers/piccolo-pull.service b/containers/piccolo-pull.service
 new file mode 100644
 index 0000000..d96d767
@@ -18,22 +124,27 @@ index 0000000..d96d767
 +
 diff --git a/containers/piccolo.sh b/containers/piccolo.sh
 new file mode 100644
-index 0000000..33e484a
+index 0000000..3139a55
 --- /dev/null
 +++ b/containers/piccolo.sh
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,8 @@
 +/usr/bin/podman pull oci-archive:/root/piccolo_images/etcd.tar
 +/usr/bin/podman pull oci-archive:/root/piccolo_images/piccolo.tar
++/usr/bin/podman pull oci-archive:/root/piccolo_images/helloworld.tar
++/usr/bin/cat /root/piccolo_images/agent-00-default.conf > /etc/bluechi/agent.conf.d/00-default.conf
++/usr/bin/cat /root/piccolo_images/controller-00-default.conf > /etc/bluechi/controller.conf.d/00-default.conf
++
++systemctl restart bluechi-controller.service bluechi-agent.service podman.service
 +
 diff --git a/containers/piccolo.yaml b/containers/piccolo.yaml
-index 9327aff..a629127 100644
+index 1f181dd..a629127 100644
 --- a/containers/piccolo.yaml
 +++ b/containers/piccolo.yaml
 @@ -11,7 +11,7 @@ spec:
    hostPid: true
    containers:
    - name: api-server
--    image: ghcr.io/eclipse-pullpiri/pullpiri:0.1.0
+-    image: localhost/pullpiri:0.1.0
 +    image: localhost/piccolo:1.0
      command: ["/piccolo/api-server"]
      volumeMounts:
@@ -42,7 +153,7 @@ index 9327aff..a629127 100644
      - name: config-path
        mountPath: /piccolo/settings.yaml
    - name: statemanager
--    image: ghcr.io/eclipse-pullpiri/pullpiri:0.1.0
+-    image: localhost/pullpiri:0.1.0
 +    image: localhost/piccolo:1.0
      command: ["/piccolo/statemanager"]
      volumeMounts:
@@ -51,8 +162,62 @@ index 9327aff..a629127 100644
      - name: etcd-data
        mountPath: /etcd-data
    - name: gateway
--    image: ghcr.io/eclipse-pullpiri/pullpiri:0.1.0
+-    image: localhost/pullpiri:0.1.0
 +    image: localhost/piccolo:1.0
      command: ["/piccolo/gateway"]
      env:
      - name: RUST_BACKTRACE
+diff --git a/examples/helloworld/packages/make_tar.sh b/examples/helloworld/packages/make_tar.sh
+deleted file mode 100755
+index 60dce84..0000000
+--- a/examples/helloworld/packages/make_tar.sh
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#!/bin/bash
+-
+-for dir in */; do
+-	dir_name=${dir%/}
+-	tar -cvf "${dir_name}.tar" "$dir_name"
+-done
+diff --git a/examples/helloworld/script/input_package.sh b/examples/helloworld/script/input_package.sh
+deleted file mode 100755
+index a7aba4f..0000000
+--- a/examples/helloworld/script/input_package.sh
++++ /dev/null
+@@ -1,10 +0,0 @@
+-#!/bin/bash
+-
+-PACKAGES="helloworld"
+-
+-for package in $PACKAGES
+-do
+-    curl --location 'http://0.0.0.0:47099/package' \
+-    --header 'Content-Type: text/plain' \
+-    --data "${package}"
+-done
+\ No newline at end of file
+diff --git a/examples/helloworld/script/input_scenario.sh b/examples/helloworld/script/input_scenario.sh
+deleted file mode 100755
+index cb77b20..0000000
+--- a/examples/helloworld/script/input_scenario.sh
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#!/bin/bash
+-
+-echo "1-start, 2-stop :"
+-read input
+-A=$((input))
+-BODY=""
+-
+-if [ "$A" -eq 1 ]; then
+-	BODY="helloworld/helloworld"
+-elif [ "$A" -eq 2 ]; then
+-	BODY="helloworld/helloworld-stop"
+-fi
+-
+-curl --location 'http://0.0.0.0:47099/scenario' \
+---header 'Content-Type: text/plain' \
+---data "${BODY}"
+-- 
+2.43.0
+

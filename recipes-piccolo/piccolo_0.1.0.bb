@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "gitsm://github.com/youngtaekiim/pullpiri.git;protocol=http;branch=arm"
-SRCREV = "794cd5fcccdc2292f24ce72710dcee8ef470597c"
+SRCREV = "c23b77aaa038c5df3e90fb73edbcb8bcbe6f7972"
 
 SRC_URI:append = " file://0001-add-file-for-yocto.patch"
 
@@ -61,6 +61,10 @@ do_install() {
     install -m 0755 ${S}/containers/piccolo.sh ${D}/root/piccolo_images/
     install -m 0644 ${S}/containers/piccolo-pull.service ${D}/etc/systemd/system/
     install -m 0755 ${WORKDIR}/out/* ${D}/root/piccolo_images/
+    cp -r ${S}/examples/helloworld/* ${D}/root/piccolo_yaml/
+    install -m 0755 ${S}/containers/agent-00-default.conf ${D}/root/piccolo_images/
+    install -m 0755 ${S}/containers/controller-00-default.conf ${D}/root/piccolo_images/
+    install -m 0755 ${THISDIR}/files/helloworld.tar ${D}/root/piccolo_images/
 }
 
 REQUESTED_DISTRO_FEATURES = "virtualization"
