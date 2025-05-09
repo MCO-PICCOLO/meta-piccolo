@@ -65,6 +65,12 @@ do_install() {
     install -m 0755 ${S}/containers/agent-00-default.conf ${D}/root/piccolo_images/
     install -m 0755 ${S}/containers/controller-00-default.conf ${D}/root/piccolo_images/
     install -m 0755 ${THISDIR}/files/helloworld.tar ${D}/root/piccolo_images/
+    install -m 0755 ${THISDIR}/files/hellosoafee.tar ${D}/root/piccolo_images/
+    install -m 0755 ${THISDIR}/files/sendgear.tar ${D}/root/piccolo_images/
+    install -m 0755 ${THISDIR}/files/sendDrive.sh ${D}/root/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendNeutral.sh ${D}/root/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendParking.sh ${D}/root/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendReverse.sh ${D}/root/piccolo_yaml/
 }
 
 REQUESTED_DISTRO_FEATURES = "virtualization"

@@ -131,6 +131,8 @@ index 0000000..3139a55
 +/usr/bin/podman pull oci-archive:/root/piccolo_images/etcd.tar
 +/usr/bin/podman pull oci-archive:/root/piccolo_images/piccolo.tar
 +/usr/bin/podman pull oci-archive:/root/piccolo_images/helloworld.tar
++/usr/bin/podman pull oci-archive:/root/piccolo_images/hellosoafee.tar
++/usr/bin/podman pull oci-archive:/root/piccolo_images/sendgear.tar
 +/usr/bin/cat /root/piccolo_images/agent-00-default.conf > /etc/bluechi/agent.conf.d/00-default.conf
 +/usr/bin/cat /root/piccolo_images/controller-00-default.conf > /etc/bluechi/controller.conf.d/00-default.conf
 +
