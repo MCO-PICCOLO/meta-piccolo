@@ -1,6 +1,7 @@
 # meta-piccolo
 This repository provides a Yocto layer for the purpose of integrating the PICCOLO project into EWAOL.
-Since we are syncing with the verified published version, it may differ from the latest pullpiri version.
+To effectively collaborate with EWAOL, meta-piccolo has established a rule to use the verified published version.
+Therefore, it may differ from the latest pullpiri version.
 
 ## Regarding container builds in the Yocto build process
 To build a piccolo container within the Yocto build process, Docker was used. Docker and Skopeo need to be added to HOSTTOOLS in the bitbake.conf file of Poky git.
