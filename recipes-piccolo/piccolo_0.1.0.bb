@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI = "gitsm://github.com/youngtaekiim/pullpiri.git;protocol=http;branch=arm"
+SRC_URI = "gitsm://github.com/MCO-PICCOLO/Pullpiri.git;protocol=http;branch=arm"
 SRCREV = "c23b77aaa038c5df3e90fb73edbcb8bcbe6f7972"
 
 SRC_URI:append = " file://0001-add-file-for-yocto.patch"
