@@ -1,18 +1,19 @@
-From e873c9d2e9b7fa0df89f2771bd082ce3ab369910 Mon Sep 17 00:00:00 2001
+From 00c30f5b6985eecfb2121c88327f10916b0c64f8 Mon Sep 17 00:00:00 2001
 From: "yonghyeon.kim" <yonghyeon.kim@lge.com>
-Date: Mon, 28 Apr 2025 18:22:12 +0900
-Subject: [PATCH] add file for yocto
+Date: Thu, 24 Jul 2025 13:51:34 +0900
+Subject: [PATCH] add-file-for-yocto
 
 ---
  containers/agent-00-default.conf             | 42 ++++++++++++++++++++
  containers/controller-00-default.conf        | 29 ++++++++++++++
  containers/piccolo-pull.service              | 12 ++++++
  containers/piccolo.sh                        |  8 ++++
- containers/piccolo.yaml                      |  6 +--
+ containers/piccolo.yaml                      | 12 +++---
  examples/helloworld/packages/make_tar.sh     |  6 ---
  examples/helloworld/script/input_package.sh  | 10 -----
  examples/helloworld/script/input_scenario.sh | 16 --------
- 8 files changed, 94 insertions(+), 35 deletions(-)
+ src/settings.yaml                            |  2 +-
+ 9 files changed, 98 insertions(+), 39 deletions(-)
  create mode 100644 containers/agent-00-default.conf
  create mode 100644 containers/controller-00-default.conf
  create mode 100644 containers/piccolo-pull.service
@@ -106,7 +107,7 @@ index 0000000..10f317a
 +LogIsQuiet=false
 diff --git a/containers/piccolo-pull.service b/containers/piccolo-pull.service
 new file mode 100644
-index 0000000..d96d767
+index 0000000..be9bf4a
 --- /dev/null
 +++ b/containers/piccolo-pull.service
 @@ -0,0 +1,12 @@
@@ -117,32 +118,30 @@ index 0000000..d96d767
 +
 +[Service]
 +Type=simple
-+ExecStart=/bin/sh /root/piccolo_images/piccolo.sh
++ExecStart=/bin/sh /home/ewaol/piccolo_images/piccolo.sh
 +
 +[Install]
 +WantedBy=multi-user.target
 +
 diff --git a/containers/piccolo.sh b/containers/piccolo.sh
 new file mode 100644
-index 0000000..3139a55
+index 0000000..f5a9f40
 --- /dev/null
 +++ b/containers/piccolo.sh
 @@ -0,0 +1,8 @@
-+/usr/bin/podman pull oci-archive:/root/piccolo_images/etcd.tar
-+/usr/bin/podman pull oci-archive:/root/piccolo_images/piccolo.tar
-+/usr/bin/podman pull oci-archive:/root/piccolo_images/helloworld.tar
-+/usr/bin/podman pull oci-archive:/root/piccolo_images/hellosoafee.tar
-+/usr/bin/podman pull oci-archive:/root/piccolo_images/sendgear.tar
-+/usr/bin/cat /root/piccolo_images/agent-00-default.conf > /etc/bluechi/agent.conf.d/00-default.conf
-+/usr/bin/cat /root/piccolo_images/controller-00-default.conf > /etc/bluechi/controller.conf.d/00-default.conf
-+
-+systemctl restart bluechi-controller.service bluechi-agent.service podman.service
++/usr/bin/podman pull oci-archive:/home/ewaol/piccolo_images/etcd.tar
++/usr/bin/podman pull oci-archive:/home/ewaol/piccolo_images/piccolo.tar
++/usr/bin/podman pull oci-archive:/home/ewaol/piccolo_images/helloworld.tar
++/usr/bin/podman pull oci-archive:/home/ewaol/piccolo_images/hellosoafee.tar
++/usr/bin/podman pull oci-archive:/home/ewaol/piccolo_images/sendgear.tar
++/usr/bin/cat /home/ewaol/piccolo_images/agent-00-default.conf > /etc/bluechi/agent.conf.d/00-default.conf
++/usr/bin/cat /home/ewaol/piccolo_images/controller-00-default.conf > /etc/bluechi/controller.conf.d/00-default.conf
 +
 diff --git a/containers/piccolo.yaml b/containers/piccolo.yaml
-index 1f181dd..a629127 100644
+index 1f181dd..a614e5b 100644
 --- a/containers/piccolo.yaml
 +++ b/containers/piccolo.yaml
-@@ -11,7 +11,7 @@ spec:
+@@ -11,19 +11,19 @@ spec:
    hostPid: true
    containers:
    - name: api-server
@@ -151,7 +150,8 @@ index 1f181dd..a629127 100644
      command: ["/piccolo/api-server"]
      volumeMounts:
      - name: piccolo-yaml
-@@ -19,7 +19,7 @@ spec:
+-      mountPath: /root/piccolo_yaml
++      mountPath: /home/ewaol/piccolo_yaml
      - name: config-path
        mountPath: /piccolo/settings.yaml
    - name: statemanager
@@ -160,6 +160,11 @@ index 1f181dd..a629127 100644
      command: ["/piccolo/statemanager"]
      volumeMounts:
      - name: piccolo-yaml
+-      mountPath: /root/piccolo_yaml
++      mountPath: /home/ewaol/piccolo_yaml
+     - name: dbus
+       mountPath: /run/dbus
+     - name: systemd
 @@ -38,7 +38,7 @@ spec:
      - name: etcd-data
        mountPath: /etcd-data
@@ -169,6 +174,15 @@ index 1f181dd..a629127 100644
      command: ["/piccolo/gateway"]
      env:
      - name: RUST_BACKTRACE
+@@ -49,7 +49,7 @@ spec:
+   volumes:
+   - name: piccolo-yaml
+     hostPath:
+-      path: /root/piccolo_yaml
++      path: /home/ewaol/piccolo_yaml
+   - name: dbus
+     hostPath:
+       path: /run/dbus
 diff --git a/examples/helloworld/packages/make_tar.sh b/examples/helloworld/packages/make_tar.sh
 deleted file mode 100755
 index 60dce84..0000000
@@ -220,6 +234,18 @@ index cb77b20..0000000
 -curl --location 'http://0.0.0.0:47099/scenario' \
 ---header 'Content-Type: text/plain' \
 ---data "${BODY}"
+diff --git a/src/settings.yaml b/src/settings.yaml
+index 0bec1f8..5ce590b 100644
+--- a/src/settings.yaml
++++ b/src/settings.yaml
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-yaml_storage: /root/piccolo_yaml
++yaml_storage: /home/ewaol/piccolo_yaml
+ doc_registry: http://0.0.0.0:41234
+ host:
+   name: fvp-rd-kronos
 -- 
 2.43.0
 

@@ -18,7 +18,8 @@ RDEPENDS_${PN} += "podman"
 
 PACKAGES = "${PN}"
 
-FILES:${PN} += "/root/*"
+FILES:${PN} += "/home/ewaol/piccolo_images/*"
+FILES:${PN} += "/home/ewaol/piccolo_yaml/*"
 FILES:${PN} += "/etc/containers/systemd/piccolo/*"
 
 inherit image-oci container-host systemd
@@ -49,8 +50,8 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}/root/piccolo_yaml
-    install -d ${D}/root/piccolo_images
+    install -d ${D}/home/ewaol/piccolo_yaml
+    install -d ${D}/home/ewaol/piccolo_images
     install -d ${D}/etc/containers/systemd/piccolo
     install -d ${D}/etc/containers/systemd/piccolo/example
     install -d ${D}/etc/containers/systemd/piccolo/etcd-data
@@ -58,19 +59,19 @@ do_install() {
     install -m 0755 ${S}/src/settings.yaml ${D}/etc/containers/systemd/piccolo/
     install -m 0755 ${S}/containers/piccolo.kube ${D}/etc/containers/systemd/piccolo/
     install -m 0755 ${S}/containers/piccolo.yaml ${D}/etc/containers/systemd/piccolo/
-    install -m 0755 ${S}/containers/piccolo.sh ${D}/root/piccolo_images/
+    install -m 0755 ${S}/containers/piccolo.sh ${D}/home/ewaol/piccolo_images/
     install -m 0644 ${S}/containers/piccolo-pull.service ${D}/etc/systemd/system/
-    install -m 0755 ${WORKDIR}/out/* ${D}/root/piccolo_images/
-    cp -r ${S}/examples/helloworld/* ${D}/root/piccolo_yaml/
-    install -m 0755 ${S}/containers/agent-00-default.conf ${D}/root/piccolo_images/
-    install -m 0755 ${S}/containers/controller-00-default.conf ${D}/root/piccolo_images/
-    install -m 0755 ${THISDIR}/files/helloworld.tar ${D}/root/piccolo_images/
-    install -m 0755 ${THISDIR}/files/hellosoafee.tar ${D}/root/piccolo_images/
-    install -m 0755 ${THISDIR}/files/sendgear.tar ${D}/root/piccolo_images/
-    install -m 0755 ${THISDIR}/files/sendDrive.sh ${D}/root/piccolo_yaml/
-    install -m 0755 ${THISDIR}/files/sendNeutral.sh ${D}/root/piccolo_yaml/
-    install -m 0755 ${THISDIR}/files/sendParking.sh ${D}/root/piccolo_yaml/
-    install -m 0755 ${THISDIR}/files/sendReverse.sh ${D}/root/piccolo_yaml/
+    install -m 0755 ${WORKDIR}/out/* ${D}/home/ewaol/piccolo_images/
+    cp -r ${S}/examples/helloworld/* ${D}/home/ewaol/piccolo_yaml/
+    install -m 0755 ${S}/containers/agent-00-default.conf ${D}/home/ewaol/piccolo_images/
+    install -m 0755 ${S}/containers/controller-00-default.conf ${D}/home/ewaol/piccolo_images/
+    install -m 0755 ${THISDIR}/files/helloworld.tar ${D}/home/ewaol/piccolo_images/
+    install -m 0755 ${THISDIR}/files/hellosoafee.tar ${D}/home/ewaol/piccolo_images/
+    install -m 0755 ${THISDIR}/files/sendgear.tar ${D}/home/ewaol/piccolo_images/
+    install -m 0755 ${THISDIR}/files/sendDrive.sh ${D}/home/ewaol/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendNeutral.sh ${D}/home/ewaol/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendParking.sh ${D}/home/ewaol/piccolo_yaml/
+    install -m 0755 ${THISDIR}/files/sendReverse.sh ${D}/home/ewaol/piccolo_yaml/
 }
 
 REQUESTED_DISTRO_FEATURES = "virtualization"
