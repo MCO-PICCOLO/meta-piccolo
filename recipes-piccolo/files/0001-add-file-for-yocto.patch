@@ -1,19 +1,19 @@
-From 00c30f5b6985eecfb2121c88327f10916b0c64f8 Mon Sep 17 00:00:00 2001
+From dc0785834706bfe48570b02a32f3260911f88f67 Mon Sep 17 00:00:00 2001
 From: "yonghyeon.kim" <yonghyeon.kim@lge.com>
 Date: Thu, 24 Jul 2025 13:51:34 +0900
-Subject: [PATCH] add-file-for-yocto
+Subject: [PATCH] add file for yocto
 
 ---
  containers/agent-00-default.conf             | 42 ++++++++++++++++++++
  containers/controller-00-default.conf        | 29 ++++++++++++++
  containers/piccolo-pull.service              | 12 ++++++
  containers/piccolo.sh                        |  8 ++++
- containers/piccolo.yaml                      | 12 +++---
+ containers/piccolo.yaml                      | 14 ++++---
  examples/helloworld/packages/make_tar.sh     |  6 ---
  examples/helloworld/script/input_package.sh  | 10 -----
  examples/helloworld/script/input_scenario.sh | 16 --------
  src/settings.yaml                            |  2 +-
- 9 files changed, 98 insertions(+), 39 deletions(-)
+ 9 files changed, 100 insertions(+), 39 deletions(-)
  create mode 100644 containers/agent-00-default.conf
  create mode 100644 containers/controller-00-default.conf
  create mode 100644 containers/piccolo-pull.service
@@ -138,10 +138,10 @@ index 0000000..f5a9f40
 +/usr/bin/cat /home/ewaol/piccolo_images/controller-00-default.conf > /etc/bluechi/controller.conf.d/00-default.conf
 +
 diff --git a/containers/piccolo.yaml b/containers/piccolo.yaml
-index 1f181dd..a614e5b 100644
+index 1f181dd..1b0a8c3 100644
 --- a/containers/piccolo.yaml
 +++ b/containers/piccolo.yaml
-@@ -11,19 +11,19 @@ spec:
+@@ -11,19 +11,21 @@ spec:
    hostPid: true
    containers:
    - name: api-server
@@ -157,6 +157,8 @@ index 1f181dd..a614e5b 100644
    - name: statemanager
 -    image: localhost/pullpiri:0.1.0
 +    image: localhost/piccolo:1.0
++    securityContext:
++      privileged: true
      command: ["/piccolo/statemanager"]
      volumeMounts:
      - name: piccolo-yaml
@@ -165,7 +167,7 @@ index 1f181dd..a614e5b 100644
      - name: dbus
        mountPath: /run/dbus
      - name: systemd
-@@ -38,7 +38,7 @@ spec:
+@@ -38,7 +40,7 @@ spec:
      - name: etcd-data
        mountPath: /etcd-data
    - name: gateway
@@ -174,7 +176,7 @@ index 1f181dd..a614e5b 100644
      command: ["/piccolo/gateway"]
      env:
      - name: RUST_BACKTRACE
-@@ -49,7 +49,7 @@ spec:
+@@ -49,7 +51,7 @@ spec:
    volumes:
    - name: piccolo-yaml
      hostPath:
