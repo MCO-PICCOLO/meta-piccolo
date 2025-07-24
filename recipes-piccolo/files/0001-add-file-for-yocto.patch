@@ -1,4 +1,4 @@
-From dc0785834706bfe48570b02a32f3260911f88f67 Mon Sep 17 00:00:00 2001
+From 58b57e08a8da84c9d516a28a9048af996ba83ae5 Mon Sep 17 00:00:00 2001
 From: "yonghyeon.kim" <yonghyeon.kim@lge.com>
 Date: Thu, 24 Jul 2025 13:51:34 +0900
 Subject: [PATCH] add file for yocto
@@ -12,8 +12,8 @@ Subject: [PATCH] add file for yocto
  examples/helloworld/packages/make_tar.sh     |  6 ---
  examples/helloworld/script/input_package.sh  | 10 -----
  examples/helloworld/script/input_scenario.sh | 16 --------
- src/settings.yaml                            |  2 +-
- 9 files changed, 100 insertions(+), 39 deletions(-)
+ src/settings.yaml                            |  4 +-
+ 9 files changed, 101 insertions(+), 40 deletions(-)
  create mode 100644 containers/agent-00-default.conf
  create mode 100644 containers/controller-00-default.conf
  create mode 100644 containers/piccolo-pull.service
@@ -237,17 +237,21 @@ index cb77b20..0000000
 ---header 'Content-Type: text/plain' \
 ---data "${BODY}"
 diff --git a/src/settings.yaml b/src/settings.yaml
-index 0bec1f8..5ce590b 100644
+index 0bec1f8..a080d66 100644
 --- a/src/settings.yaml
 +++ b/src/settings.yaml
-@@ -1,6 +1,6 @@
+@@ -1,9 +1,9 @@
  # SPDX-License-Identifier: Apache-2.0
  
 -yaml_storage: /root/piccolo_yaml
 +yaml_storage: /home/ewaol/piccolo_yaml
  doc_registry: http://0.0.0.0:41234
  host:
-   name: fvp-rd-kronos
+-  name: fvp-rd-kronos
++  name: ewaol
+   ip: 0.0.0.0
+ guest:
+ #  - name: ZONE
 -- 
 2.43.0
 
